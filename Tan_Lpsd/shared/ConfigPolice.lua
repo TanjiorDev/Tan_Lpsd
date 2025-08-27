@@ -9,7 +9,7 @@ ConfigPolice.themes = "default"
 
 
 -- 📌 Webhook Discord
-ConfigPolice.WebhookURL = "https://discord.com/api/webhooks/1341532384511918091/nSdgOq9HzY5-QH57PlQttka1JAe99a4hfVPdYZOWjpiMBckJ7LAthtX4wgQ0kDuZWd9c"
+ConfigPolice.WebhookURL = ""
 
 -- 📌 Nom affiché dans Discord
 ConfigPolice.WebhookName = "📅 RDV Police"
@@ -687,3 +687,4 @@ ConfigPolice.NPCs = {
     },
 
 }
+
