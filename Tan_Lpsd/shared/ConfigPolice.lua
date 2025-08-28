@@ -339,7 +339,7 @@ ConfigPolice.Evidence = {
     minGrade  = 0,            -- grade minimum (0 = tous les policiers)
     slots     = 80,
     weight    = 60000,
-    webhook   = "https://discord.com/api/webhooks/1341532384511918091/nSdgOq9HzY5-QH57PlQttka1JAe99a4hfVPdYZOWjpiMBckJ7LAthtX4wgQ0kDuZWd9c",           -- URL Discord (optionnel). Laisse vide pour désactiver
+    webhook   = "",           -- URL Discord (optionnel). Laisse vide pour désactiver
     persistFile = "evidence.json",  -- nom du fichier persistant dans la ressource
     zone = {                  -- Une zone unique “Salle des preuves”
         coords   = vec3(466.080444,-986.378479,25.452406),
@@ -687,4 +687,5 @@ ConfigPolice.NPCs = {
     },
 
 }
+
 
