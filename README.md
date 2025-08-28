@@ -18,3 +18,28 @@ Si quelqu’un revend mes scripts dans mon dos, alors ils seront **déplacés su
 Ils resteront **gratuits**, mais **bloqués (lock)** pour les futures mises à jour.  
 
 Merci de respecter mon travail 🙏
+
+🚓 [Tan_Lpsd] - Menu Police en zUI-v2
+
+Vous cherchez un système Police moderne et intuitif pour votre serveur FiveM ?
+Voici Tan_Lpsd, un job Police complet développé en zUI-v2 avec une interface claire, professionnelle et ultra fluide.
+
+✨ Fonctionnalités principales :
+
+✔️ Menu Police complet avec interactions (citoyen, véhicule, objets, renforts, etc.)
+✔️ Gestion des coffres de saisies et preuves
+✔️ Casier judiciaire (création et consultation)
+✔️ Vestiaire dynamique (tenues par grade)
+✔️ Gestion de l’entreprise (coffre société, employés, promotions, etc.)
+✔️ Interaction citoyen (fouille, menotter, mettre dans le véhicule)
+✔️ Interaction véhicule (plaque, fourrière, etc.)
+✔️ Système de prise de service & demande de renforts
+✔️ Gestion d’objets déployables (plots, barrières, herses, etc.)
+
+🎨 Design & UX :
+
+Interface moderne en zUI-v2
+
+Navigation fluide et intuitive
+
+Optimisé pour une utilisation RP immersive
