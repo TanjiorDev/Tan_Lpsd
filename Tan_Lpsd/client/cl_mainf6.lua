@@ -53,6 +53,12 @@ function loadDict(dict)
     while not HasAnimDictLoaded(dict) do Wait(0) RequestAnimDict(dict) end
 end
 
+canInteract = function(entity, distance)
+    if entity == PlayerPedId() then return false end
+    if distance > 2.0 then return false end
+    return ESX.PlayerData and ESX.PlayerData.job and ESX.PlayerData.job.name == "police"
+end
+
 -- 📋 MENU PRINCIPAL
 local mainMenu = zUI.CreateMenu(
     "MENU POLICE",                -- Titre
