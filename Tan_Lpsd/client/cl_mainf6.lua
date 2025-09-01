@@ -125,6 +125,11 @@ local menuSuppression = zUI.CreateSubMenu(
     "menuSuppression",
     ConfigPolice.themes
 )
+local amendeMenu = zUI.CreateSubMenu
+("POLICE", 
+"AMENDES", 
+"Choisir une infraction", 
+ConfigBcso.themes)
 local vehicleInfos = nil
 -- S'assurer que la variable est bien booléenne dès le départ
     local enService = false
@@ -150,44 +155,85 @@ zUI.SetItems(mainMenu, function()
         zUI.Button("Appels LSPD", nil, { RightLabel = "➤" }, function() end, Appels)
         zUI.Button("Demande de renfort", nil, { RightLabel = "➤" }, function() end, menuRenforts)
         zUI.Button("Menu Objets", nil, { RightLabel = "➤" }, function() end, menuObjets)
+        zUI.Button("Menu Objets", nil, { RightLabel = "➤" }, function() end, amendeMenu)
     end
 end)
 
+zUI.SetItems(amendeMenu, function()
+    if not ConfigPolice or not ConfigPolice.amende or next(ConfigPolice.amende) == nil then
+        zUI.Separator("~r~Aucune amende configurée")
+        return
+    end
 
+    -- Parcourt des catégories d'amendes : Config.amende = { ["Circulation"] = { {label="", price=0}, ... }, ... }
+    for categorie, items in pairs(ConfigPolice.amende) do
+        zUI.Separator(("~b~%s"):format(categorie))
+
+        -- Utilise ipairs si 'items' est une liste, sinon pairs reste OK
+        for _, i in pairs(items) do
+            local label = i.label or "Amende"
+            local price = tonumber(i.price) or 0
+
+            zUI.Button(label, nil, { RightLabel = ("~g~%s$"):format(money(price)) }, function(onSelected)
+                if not onSelected then return end
+
+                local player, distance = ESX.Game.GetClosestPlayer()
+                if player ~= -1 and distance and distance <= 3.0 then
+                    local targetSid = GetPlayerServerId(player)
+
+                    -- Confirmation (ox_lib)
+                    local choice = (lib and lib.alertDialog) and lib.alertDialog({
+                        header   = 'Envoyer la facture ?',
+                        content  = ('%s\nMontant : $%s'):format(label, money(price)),
+                        centered = true,
+                        cancel   = true,
+                        labels   = { confirm = 'Envoyer', cancel = 'Annuler' }
+                    }) or 'confirm' -- si ox_lib n'est pas là, on envoie direct
+
+                    if choice == 'confirm' then
+                        -- Si ton serveur accepte aussi le libellé, ajoute i.label en 3e param :
+                        -- TriggerServerEvent("police:SendFacture", targetSid, price, label)
+                        TriggerServerEvent("police:SendFacture", targetSid, price)
+
+                        if ESX.ShowNotification then
+                            ESX.ShowNotification(
+                                ('Facture envoyée à ~y~%s~s~ : ~g~$%s'):format(GetPlayerName(player), money(price))
+                            )
+                        else
+                            TriggerEvent("esx:showNotification", "Facture envoyée.")
+                        end
+
+                        zUI.CloseAll()
+                    end
+                else
+                    if ESX.ShowNotification then
+                        ESX.ShowNotification("Aucun joueur proche")
+                    else
+                        TriggerEvent("esx:showNotification", "Aucun joueur proche", 3000, "warning")
+                    end
+                end
+            end)
+        end
+    end
+end)
 
 -- Interaction "Fouiller" via ox_target
 exports.ox_target:addGlobalPlayer({
-        {
-            name = "police",                         -- ⚠️ unique
-            label = '🔍 Fouiller',
-            icon = 'fa-solid fa-magnifying-glass',
-            distance = 2.0,
-            groups = { police = 0 },                   -- ← auto-filtrage côté ox_target pour ESX
-            canInteract = function(entity, distance)
-                if not entity or entity == PlayerPedId() then return false end
-                return (distance or 9e9) <= 2.0
-            end,
-            onSelect = function(data)
-                local ped = data.entity
-                local player = NetworkGetPlayerIndexFromPed(ped)
-                if not player or player == -1 then
-                    ESX.ShowNotification("~r~Aucune personne valide.")
-                    return
-                end
-                local serverId = GetPlayerServerId(player)
-                ExecuteCommand('me fouille l’individu')
-                exports.ox_inventory:openInventory('player', serverId)
-            end
-        },
-
     {
-        name = 'police_toggle_cuffs',                  -- ⚠️ nom unique
-        label = 'Menotter / Démenotter',
-        icon = 'fa-solid fa-handcuffs',                -- nécessite FontAwesome 6 ; sinon mets une autre icône
+        name = "police_search",                         
+        label = '🔍 Fouiller',
+        icon = 'fa-solid fa-magnifying-glass',
         distance = 2.0,
-        canInteract = function(entity, distance, coords, name)
-            if not hasJob('police', 0) then return false end
-            return canUseOnPlayer(entity, distance, 2.0)
+        groups = { police = 0 },
+        canInteract = function(entity, distance)
+            if not entity or entity == PlayerPedId() then return false end
+
+            local playerData = ESX.GetPlayerData()
+            if not playerData.job or playerData.job.name ~= 'police' or not playerData.job.onDuty then
+                return false
+            end
+
+            return distance and distance <= 2.0 or false
         end,
         onSelect = function(data)
             local ped = data.entity
@@ -198,13 +244,39 @@ exports.ox_target:addGlobalPlayer({
             end
 
             local serverId = GetPlayerServerId(player)
-            TriggerServerEvent('Policejob:handcuff', serverId)
+            ExecuteCommand('me fouille l’individu')
+            
+            -- Ouvre l'inventaire côté serveur
+            TriggerServerEvent('ox_inventory:openInventory', 'player', serverId)
+        end
+    },
 
-            -- Petit délai visuel comme dans ton code
-            CreateThread(function()
-                Wait(200)
-                DisplayRadar(true)
-            end)
+    {
+        name = 'police_toggle',                  
+        label = 'Menotter / Démenotter',
+        icon = 'fa-solid fa-handcuffs',
+        distance = 2.0,
+        groups = { police = 0 },
+        canInteract = function(entity, distance)
+            if not entity or entity == PlayerPedId() then return false end
+
+            local playerData = ESX.GetPlayerData()
+            if not playerData.job or playerData.job.name ~= 'police' or not playerData.job.onDuty then
+                return false
+            end
+
+            return distance and distance <= 2.0 or false
+        end,
+        onSelect = function(data)
+            local ped = data.entity
+            local player = NetworkGetPlayerIndexFromPed(ped)
+            if not player or player == -1 then
+                ESX.ShowNotification("~r~Aucune personne valide.")
+                return
+            end
+
+            local serverId = GetPlayerServerId(player)
+            TriggerServerEvent('Bcsojob:handcuff', serverId)
         end
     }
 })
@@ -268,8 +340,6 @@ zUI.SetItems(vehicule, function()
             end, input[1])
         end
     end, Information)
-
-
 
     zUI.Button("Véhicule en fourrière", nil, { RightLabel = "➤" }, function(onSelected)
         if not onSelected then return end
