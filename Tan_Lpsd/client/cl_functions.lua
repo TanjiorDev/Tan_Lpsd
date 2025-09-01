@@ -1,5 +1,5 @@
 -- ========= INPUTS via ox_lib (fallback natif si ox_lib absent) =========
-
+ESX = exports["es_extended"]:getSharedObject()
 -- Remplace directement ta fonction existante :
 function KeyboardInput(TextEntry, ExampleText, MaxStringLenght)
     if lib and lib.inputDialog then
@@ -26,9 +26,21 @@ end
 
 function OxInputText(title, label, default)
     if lib and lib.inputDialog then
+                    local playerPed = PlayerPedId()
+
+            -- ❄️ Geler le joueur
+            FreezeEntityPosition(playerPed, true)
+            SetEntityInvincible(playerPed, true)
+
+            -- ✅ Bloquer seulement les mouvements (conserve la caméra + ox_target)
+            SetPlayerControl(PlayerId(), false, 2)
         local input = lib.inputDialog(title or 'Saisie', {
             { type='input', label=label or 'Texte', default=default or '' }
         })
+        -- 🔓 Défreeze proprement
+            FreezeEntityPosition(playerPed, false)
+            SetEntityInvincible(playerPed, false)
+            SetPlayerControl(PlayerId(), true, 0)
         return (input and input[1] ~= '' and input[1]) or nil
     else
         return KeyboardInput(label or title or 'Saisir…', default or '', 60)
@@ -37,9 +49,21 @@ end
 
 function OxInputNumber(title, label, default)
     if lib and lib.inputDialog then
+                    local playerPed = PlayerPedId()
+
+            -- ❄️ Geler le joueur
+            FreezeEntityPosition(playerPed, true)
+            SetEntityInvincible(playerPed, true)
+
+            -- ✅ Bloquer seulement les mouvements (conserve la caméra + ox_target)
+            SetPlayerControl(PlayerId(), false, 2)
         local input = lib.inputDialog(title or 'Nombre', {
             { type='number', label=label or 'Valeur', default=default or 0 }
         })
+        -- 🔓 Défreeze proprement
+            FreezeEntityPosition(playerPed, false)
+            SetEntityInvincible(playerPed, false)
+            SetPlayerControl(PlayerId(), true, 0)
         return (input and tonumber(input[1])) or nil
     else
         local v = KeyboardInput(label or title or 'Nombre', tostring(default or ''), 10)
@@ -52,9 +76,21 @@ end
 function OxSelect(title, label, options, defaultValue)
     options = options or {}
     if lib and lib.inputDialog then
+                    local playerPed = PlayerPedId()
+
+            -- ❄️ Geler le joueur
+            FreezeEntityPosition(playerPed, true)
+            SetEntityInvincible(playerPed, true)
+
+            -- ✅ Bloquer seulement les mouvements (conserve la caméra + ox_target)
+            SetPlayerControl(PlayerId(), false, 2)
         local input = lib.inputDialog(title or 'Sélection', {
             { type='select', label=label or 'Choisir', options=options, default=defaultValue }
         })
+        -- 🔓 Défreeze proprement
+            FreezeEntityPosition(playerPed, false)
+            SetEntityInvincible(playerPed, false)
+            SetPlayerControl(PlayerId(), true, 0)
         return input and input[1] or nil
     else
         -- fallback simple: retourne nil (ou fais un KeyboardInput si tu veux)
@@ -65,10 +101,22 @@ end
 -- Couleur (RGB) → renvoie r,g,b
 function OxInputColorRGB(title, label, defaultRgbString)
     if lib and lib.inputDialog then
+                    local playerPed = PlayerPedId()
+
+            -- ❄️ Geler le joueur
+            FreezeEntityPosition(playerPed, true)
+            SetEntityInvincible(playerPed, true)
+
+            -- ✅ Bloquer seulement les mouvements (conserve la caméra + ox_target)
+            SetPlayerControl(PlayerId(), false, 2)
         local input = lib.inputDialog(title or 'Couleur', {
             { type='color', label=label or 'Couleur', format='rgb', default=defaultRgbString or 'rgb(255,255,255)' }
         })
         if not input then return nil end
+-- 🔓 Défreeze proprement
+            FreezeEntityPosition(playerPed, false)
+            SetEntityInvincible(playerPed, false)
+            SetPlayerControl(PlayerId(), true, 0)
         local c = input[1] or 'rgb(255,255,255)'
         local r, g, b = string.match(c, "rgb%((%d+),%s*(%d+),%s*(%d+)%)")
         return tonumber(r), tonumber(g), tonumber(b)
