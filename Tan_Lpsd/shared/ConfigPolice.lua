@@ -6,7 +6,11 @@ ConfigPolice.CommandeMenu = "policemenu"  -- Commande pour ouvrir le menu
 ConfigPolice.ToucheMenu = "F6"  -- Touche d'accès rapide
 ConfigPolice.themes = "default"
 
-
+ConfigPolice.Notifications = {
+    ox_lib = false,         -- true pour utiliser ox_lib
+    vms_notifyv2 = false,   -- true pour utiliser vms_notifyv2
+    esx_notify = true       -- true pour utiliser ESX notifications natives
+}
 
 -- 📌 Webhook Discord
 ConfigPolice.WebhookURL = ""
@@ -16,7 +20,7 @@ ConfigPolice.WebhookName = "📅 RDV Police"
 
 -- 📌 Poste de police (interaction)
 -- config.lua
-ConfigPolice.PoliceStation = vec3(441.740387, -980.521667, 30.898319)
+ConfigPolice.PoliceStation =  vector3(441.98, -981.13, 30.69) 
 -- (vector3(...) marche aussi)
 
 
@@ -339,7 +343,7 @@ ConfigPolice.Evidence = {
     minGrade  = 0,            -- grade minimum (0 = tous les policiers)
     slots     = 80,
     weight    = 60000,
-    webhook   = "",           -- URL Discord (optionnel). Laisse vide pour désactiver
+    webhook   = "https://discord.com/api/webhooks/1341532384511918091/nSdgOq9HzY5-QH57PlQttka1JAe99a4hfVPdYZOWjpiMBckJ7LAthtX4wgQ0kDuZWd9c",           -- URL Discord (optionnel). Laisse vide pour désactiver
     persistFile = "evidence.json",  -- nom du fichier persistant dans la ressource
     zone = {                  -- Une zone unique “Salle des preuves”
         coords   = vec3(466.080444,-986.378479,25.452406),
@@ -596,6 +600,7 @@ ConfigPolice.Garage = {
         }
     }
 }
+
 ConfigPolice.Ranger = {
     PoliceRanger = {
         coords = vector3( vector3(462.17, -1014.85, 27.74) ),  -- Exemple de coordonnées du garage
@@ -687,6 +692,3 @@ ConfigPolice.NPCs = {
     },
 
 }
-
-
-
