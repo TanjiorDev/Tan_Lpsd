@@ -590,7 +590,7 @@ ConfigPolice.Garage = {
         size = vector3(3.0, 3.0, 3.0),
         garageMenu = {
             name = "police_garage",
-            icon = "car",
+            icon = "fa-solid fa-car",
             label = "Ouvrir le Garage police",
             distance = 2.0
         }
@@ -687,5 +687,6 @@ ConfigPolice.NPCs = {
     },
 
 }
+
 
 
