@@ -125,11 +125,14 @@ local menuSuppression = zUI.CreateSubMenu(
     "menuSuppression",
     ConfigPolice.themes
 )
-local amendeMenu = zUI.CreateSubMenu
-("POLICE", 
-"AMENDES", 
-"Choisir une infraction", 
-ConfigBcso.themes)
+
+local amendeMenu = zUI.CreateSubMenu(
+    mainMenu,
+    "POLICE",                -- Titre
+    "",
+    "Choisir une infraction",
+    ConfigPolice.themes
+)
 local vehicleInfos = nil
 -- S'assurer que la variable est bien booléenne dès le départ
     local enService = false
@@ -471,28 +474,28 @@ end)
 zUI.SetItems(menuRenforts, function()
     zUI.Button("🚓 Petite demande", nil, { RightLabel = "→" }, function(onSelected)
         if onSelected then
-            local raison = 'petite'
+            local raison = 'petitepolice'
             local playerPed = PlayerPedId()
             local coords = GetEntityCoords(playerPed)
-            TriggerServerEvent('renfort', coords, raison)
+            TriggerServerEvent('renfortpolice', coords, raison)
         end
     end)
 
     zUI.Button("🚔 Moyenne demande", nil, { RightLabel = "→" }, function(onSelected)
         if onSelected then
-            local raison = 'moyenne'
+            local raison = 'moyennepolice'
             local playerPed = PlayerPedId()
             local coords = GetEntityCoords(playerPed)
-            TriggerServerEvent('renfort', coords, raison)
+            TriggerServerEvent('renfortpolice', coords, raison)
         end
     end)
 
     zUI.Button("🚨 Grosse demande", nil, { RightLabel = "→" }, function(onSelected)
         if onSelected then
-            local raison = 'grosse'
+            local raison = 'grossepolice'
             local playerPed = PlayerPedId()
             local coords = GetEntityCoords(playerPed)
-            TriggerServerEvent('renfort', coords, raison)
+            TriggerServerEvent('renfortpolice', coords, raison)
         end
     end)
 end)
@@ -638,33 +641,33 @@ AddEventHandler('Policejob:InfoService', function(service, nom)
     end
 end)
 
-RegisterNetEvent('renfort:setBlip')
-AddEventHandler('renfort:setBlip', function(coords, raison)
+RegisterNetEvent('renfortpolice:setBlip')
+AddEventHandler('renfortpolice:setBlip', function(coords, raison)
     local color = 0
 
-    if raison == 'petite' then
+    if raison == 'petitepolice' then
         PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
-        if ConfigPolice.Notifications.esx_notify then
+        if ConfigPolice and ConfigPolice.Notifications and ConfigPolice.Notifications.esx_notify then
             ESX.ShowAdvancedNotification('LSPD INFORMATIONS', '~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-2\n~w~Importance: ~g~Légère', 'CHAR_CALL911', 8)
         end
         Wait(1000)
         PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
         color = 2
-    elseif raison == 'moyenne' then
+    elseif raison == 'moyennepolice' then
         PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
-        if ConfigPolice.Notifications.esx_notify then
+        if ConfigPolice and ConfigPolice.Notifications and ConfigPolice.Notifications.esx_notify then
             ESX.ShowAdvancedNotification('LSPD INFORMATIONS', '~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-3\n~w~Importance: ~o~Importante', 'CHAR_CALL911', 8)
         end
         Wait(1000)
         PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
         color = 47
-    elseif raison == 'grosse' then
+    elseif raison == 'grossepolice' then
         PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
         PlaySoundFrontend(-1, "FocusIn", "HintCamSounds", 1)
-        if ConfigPolice.Notifications.esx_notify then
+        if ConfigPolice and ConfigPolice.Notifications and ConfigPolice.Notifications.esx_notify then
             ESX.ShowAdvancedNotification('LSPD INFORMATIONS', '~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-99\n~w~Importance: ~r~URGENTE !\nDANGER IMPORTANT', 'CHAR_CALL911', 8)
         end
         Wait(1000)
@@ -683,8 +686,6 @@ AddEventHandler('renfort:setBlip', function(coords, raison)
     Wait(80 * 1000)
     RemoveBlip(blipId)
 end)
-
-
 
 function SpawnObj(obj)
     local playerPed = PlayerPedId()
