@@ -279,7 +279,7 @@ exports.ox_target:addGlobalPlayer({
             end
 
             local serverId = GetPlayerServerId(player)
-            TriggerServerEvent('Bcsojob:handcuff', serverId)
+            TriggerServerEvent('policejob:handcuff', serverId)
         end
     }
 })
@@ -641,6 +641,28 @@ AddEventHandler('Policejob:InfoService', function(service, nom)
     end
 end)
 
+function policeNotify(title, message, notifType)
+    if Configpolice and Configpolice.Notifications then
+        if Configpolice.Notifications.ox_lib and lib and lib.notify then
+            lib.notify({
+                title = title or "police",
+                description = message,
+                type = notifType or "inform",
+                position = 'top-right',
+                duration = 7000
+            })
+        elseif Configpolice.Notifications.vms_notifyv2 then
+            TriggerEvent('vms_notifyv2:Notify', message, notifType or "info")
+        elseif Configpolice.Notifications.esx_notify then
+            ESX.ShowAdvancedNotification('police INFORMATIONS', title or "Notification", message, 'CHAR_CALL911', 8)
+        else
+            ESX.ShowNotification(message)
+        end
+    else
+        ESX.ShowNotification(message)
+    end
+end
+
 RegisterNetEvent('renfortpolice:setBlip')
 AddEventHandler('renfortpolice:setBlip', function(coords, raison)
     local color = 0
@@ -648,18 +670,14 @@ AddEventHandler('renfortpolice:setBlip', function(coords, raison)
     if raison == 'petitepolice' then
         PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
-        if ConfigPolice and ConfigPolice.Notifications and ConfigPolice.Notifications.esx_notify then
-            ESX.ShowAdvancedNotification('LSPD INFORMATIONS', '~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-2\n~w~Importance: ~g~Légère', 'CHAR_CALL911', 8)
-        end
+        policeNotify('~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-2\n~w~Importance: ~g~Légère', 'inform')
         Wait(1000)
         PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
         color = 2
     elseif raison == 'moyennepolice' then
         PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
-        if ConfigPolice and ConfigPolice.Notifications and ConfigPolice.Notifications.esx_notify then
-            ESX.ShowAdvancedNotification('LSPD INFORMATIONS', '~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-3\n~w~Importance: ~o~Importante', 'CHAR_CALL911', 8)
-        end
+        policeNotify('~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-3\n~w~Importance: ~o~Importante', 'inform')
         Wait(1000)
         PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
         color = 47
@@ -667,9 +685,7 @@ AddEventHandler('renfortpolice:setBlip', function(coords, raison)
         PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
         PlaySoundFrontend(-1, "FocusIn", "HintCamSounds", 1)
-        if ConfigPolice and ConfigPolice.Notifications and ConfigPolice.Notifications.esx_notify then
-            ESX.ShowAdvancedNotification('LSPD INFORMATIONS', '~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-99\n~w~Importance: ~r~URGENTE !\nDANGER IMPORTANT', 'CHAR_CALL911', 8)
-        end
+        policeNotify('~b~Demande de renfort', 'Demande de renfort demandé\nRéponse: ~g~CODE-99\n~w~Importance: ~r~URGENTE !\nDANGER IMPORTANT', 'error')
         Wait(1000)
         PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
         PlaySoundFrontend(-1, "FocusOut", "HintCamSounds", 1)
