@@ -344,8 +344,8 @@ AddEventHandler("Police:AnnounceService", function(status)
     end
 end)
 
-RegisterServerEvent('renfort')
-AddEventHandler('renfort', function(coords, raison)
+RegisterServerEvent('renfortpolice')
+AddEventHandler('renfortpolice', function(coords, raison)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
     local xPlayers = ESX.GetPlayers()
@@ -358,14 +358,14 @@ AddEventHandler('renfort', function(coords, raison)
 
         if thePlayer and thePlayer.job.name == 'police' then
             -- Blip sur la map
-            TriggerClientEvent('renfort:setBlip', targetId, safeCoords, raison)
+            TriggerClientEvent('renfortpolice:setBlip', targetId, safeCoords, raison)
 
-            -- Notification texte
+            -- Notification centralisée
             local notif = ("🚨 Demande de renfort\nUnité : %s\nType : %s\nLocalisation transmise à l'unité."):format(
                 xPlayer.getName() or "Inconnu",
                 raison
             )
-            TriggerClientEvent('esx:showNotification', targetId, notif)
+            Notifypolice(targetId, notif, "info")
         end
     end
 end)
