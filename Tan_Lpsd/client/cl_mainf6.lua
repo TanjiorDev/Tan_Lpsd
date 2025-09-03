@@ -3,20 +3,21 @@ local zUI = exports["zUI-v2"]:getObject()
 local ESX = exports["es_extended"]:getSharedObject()
 
 
--- Helper : vérifier le job
-local function hasJob(requiredJob, minGrade)
-    local data = ESX.GetPlayerData()
-    if not data or not data.job or data.job.name ~= requiredJob then return false end
-    local grade = data.job.grade or data.job.grade_level or 0
-    return grade >= (minGrade or 0)
-end
-
--- (Optionnel) vérifier que la cible est vivante et proche
-local function canUseOnPlayer(entity, distance, maxDist)
-    if not entity or not DoesEntityExist(entity) then return false end
-    if IsPedAPlayer(entity) ~= 1 then return false end
-    if IsPedDeadOrDying(entity, true) then return false end
-    return (distance or 0.0) <= (maxDist or 2.0)
+-- 💵 Helper formatage monnaie (évite l'erreur "money is nil")
+local function fmtMoney(val)
+    val = tonumber(val) or 0
+    val = math.floor(val)
+    if ESX and ESX.Math and ESX.Math.GroupDigits then
+        return ESX.Math.GroupDigits(val)
+    end
+    -- fallback simple si ESX.Math n'est pas dispo
+    local s = tostring(val)
+    local k
+    while true do
+        s, k = s:gsub("^(-?%d+)(%d%d%d)", "%1 %2")
+        if k == 0 then break end
+    end
+    return s
 end
 
 -- 🔁 Fonctions utilitaires
@@ -128,7 +129,7 @@ local menuSuppression = zUI.CreateSubMenu(
 
 local amendeMenu = zUI.CreateSubMenu(
     mainMenu,
-    "POLICE",                -- Titre
+    "Police",                -- Titre
     "",
     "Choisir une infraction",
     ConfigPolice.themes
@@ -158,7 +159,7 @@ zUI.SetItems(mainMenu, function()
         zUI.Button("Appels LSPD", nil, { RightLabel = "➤" }, function() end, Appels)
         zUI.Button("Demande de renfort", nil, { RightLabel = "➤" }, function() end, menuRenforts)
         zUI.Button("Menu Objets", nil, { RightLabel = "➤" }, function() end, menuObjets)
-        zUI.Button("Menu Objets", nil, { RightLabel = "➤" }, function() end, amendeMenu)
+        zUI.Button("amendeMenu", nil, { RightLabel = "➤" }, function() end, amendeMenu)
     end
 end)
 
@@ -168,39 +169,37 @@ zUI.SetItems(amendeMenu, function()
         return
     end
 
-    -- Parcourt des catégories d'amendes : Config.amende = { ["Circulation"] = { {label="", price=0}, ... }, ... }
     for categorie, items in pairs(ConfigPolice.amende) do
         zUI.Separator(("~b~%s"):format(categorie))
 
-        -- Utilise ipairs si 'items' est une liste, sinon pairs reste OK
         for _, i in pairs(items) do
             local label = i.label or "Amende"
             local price = tonumber(i.price) or 0
 
-            zUI.Button(label, nil, { RightLabel = ("~g~%s$"):format(money(price)) }, function(onSelected)
+            zUI.Button(label, nil, { RightLabel = ("~g~%s$"):format(fmtMoney(price)) }, function(onSelected)
                 if not onSelected then return end
 
                 local player, distance = ESX.Game.GetClosestPlayer()
                 if player ~= -1 and distance and distance <= 3.0 then
                     local targetSid = GetPlayerServerId(player)
 
-                    -- Confirmation (ox_lib)
+                    -- Confirmation (ox_lib si présent, sinon envoi direct)
                     local choice = (lib and lib.alertDialog) and lib.alertDialog({
                         header   = 'Envoyer la facture ?',
-                        content  = ('%s\nMontant : $%s'):format(label, money(price)),
+                        content  = ('%s\nMontant : $%s'):format(label, fmtMoney(price)),
                         centered = true,
                         cancel   = true,
                         labels   = { confirm = 'Envoyer', cancel = 'Annuler' }
-                    }) or 'confirm' -- si ox_lib n'est pas là, on envoie direct
+                    }) or 'confirm'
 
                     if choice == 'confirm' then
-                        -- Si ton serveur accepte aussi le libellé, ajoute i.label en 3e param :
-                        -- TriggerServerEvent("police:SendFacture", targetSid, price, label)
+                        -- Si tu veux aussi le libellé côté serveur, ajoute-le ici
+                        -- TriggerServerEvent("bcso:SendFacture", targetSid, price, label)
                         TriggerServerEvent("police:SendFacture", targetSid, price)
 
                         if ESX.ShowNotification then
                             ESX.ShowNotification(
-                                ('Facture envoyée à ~y~%s~s~ : ~g~$%s'):format(GetPlayerName(player), money(price))
+                                ('Facture envoyée à ~y~%s~s~ : ~g~$%s'):format(GetPlayerName(player), fmtMoney(price))
                             )
                         else
                             TriggerEvent("esx:showNotification", "Facture envoyée.")
@@ -344,6 +343,7 @@ zUI.SetItems(vehicule, function()
         end
     end, Information)
 
+
     zUI.Button("Véhicule en fourrière", nil, { RightLabel = "➤" }, function(onSelected)
         if not onSelected then return end
         local playerPed = PlayerPedId()
@@ -401,24 +401,33 @@ zUI.SetItems(Information, function()
     end
 end)
 
+
 zUI.SetItems(Appels, function()
     local statusOptions = {
-        { label = "Prise de service",    value = "pris le service" },
+        { label = "Prise de service",    value = "pris son service" },
         { label = "Fin de service",      value = "terminé son service" },
         { label = "Pause de service",    value = "mis en pause" },
         { label = "Standby",             value = "passé en standby" },
         { label = "Retour Commissariat", value = "retourné au commissariat" },
     }
 
+    -- Cooldown anti double-clic
+    local lastActionAt = 0
+
     for _, status in ipairs(statusOptions) do
         zUI.Button(status.label, nil, { RightLabel = "➤" }, function(onSelected)
             if onSelected then
+                local now = GetGameTimer()
+                if (now - lastActionAt) < 1000 then return end -- 1s de cooldown
+                lastActionAt = now
+
                 TriggerServerEvent('Policejob:PriseEtFinservice', status.value)
                 zUI.CloseAll()
             end
         end)
     end
 end)
+
 
 
 -- 📦 Menu objets avec zUI-v2
@@ -581,64 +590,6 @@ AddEventHandler('Policejob:OutVehicle', function(t)
     local xnew = plyPos.x+2
     local ynew = plyPos.y+2
     SetEntityCoords(GetPlayerPed(-1), xnew, ynew, plyPos.z)
-end)
-
-
--- Charger la configuration
-
-RegisterNetEvent('Policejob:InfoService')
-AddEventHandler('Policejob:InfoService', function(service, nom)
-    local messages = {
-        prise = {
-            title = 'Prise de service',
-            description = '👮 Agent : '..nom..'\n📻 Code : 10-7\n✅ Information : Prise de service',
-            type = 'success'
-        },
-        fin = {
-            title = 'Fin de service',
-            description = '👮 Agent : '..nom..'\n📻 Code : 10-8\n❌ Information : Fin de service',
-            type = 'error'
-        },
-        pause = {
-            title = 'Pause de service',
-            description = '👮 Agent : '..nom..'\n📻 Code : 10-6\n☕ Information : Pause de service',
-            type = 'inform'
-        },
-        standby = {
-            title = 'Mise en standby',
-            description = '👮 Agent : '..nom..'\n📻 Code : 10-9\n⌛ Information : Standby, en attente de dispatch',
-            type = 'inform'
-        },
-        rdv = {
-            title = 'Retour au poste',
-            description = '👮 Agent : '..nom..'\n📻 Code : 10-19\n🏢 Information : Retour Commissariat',
-            type = 'inform'
-        }
-    }
-
-    local notif = messages[service]
-    if notif then
-        -- Son radio CB
-        PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
-
-        -- Vérifier quel type de notification afficher
-        if ConfigPolice.Notifications.ox_lib then
-            -- Affichage notification ox_lib
-            lib.notify({
-                title = 'LSPD • '..notif.title,
-                description = notif.description,
-                type = notif.type, -- 'success', 'error', 'inform'
-                position = 'top-right',
-                duration = 7000 -- durée en ms
-            })
-        elseif ConfigPolice.Notifications.esx_notify then
-            -- Affichage notification esx_notify
-            ESX.ShowAdvancedNotification('LSPD INFORMATIONS', notif.title, notif.description, 'CHAR_CALL911', 8)
-        end
-
-        Wait(1000)
-        PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
-    end
 end)
 
 function policeNotify(title, message, notifType)
