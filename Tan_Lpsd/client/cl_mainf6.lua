@@ -278,7 +278,7 @@ exports.ox_target:addGlobalPlayer({
             end
 
             local serverId = GetPlayerServerId(player)
-            TriggerServerEvent('policejob:handcuff', serverId)
+            TriggerServerEvent('Policejob:handcuff', serverId)
         end
     }
 })
