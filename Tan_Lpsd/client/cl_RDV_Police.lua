@@ -1,6 +1,3 @@
--- Script RDV Police
--- Développé avec Click&Build
-
 -- Util : force en vec3 si la valeur vient d'une table
 local function ensureVec3(v)
     if type(v) == 'vector3' then return v end
@@ -63,23 +60,10 @@ end)
 
 -- Fonction d’ouverture du menu
 function OpenRdvMenu()
-     local playerPed = PlayerPedId()
-
-            -- ❄️ Geler le joueur
-            FreezeEntityPosition(playerPed, true)
-            SetEntityInvincible(playerPed, true)
-
-            -- ✅ Bloquer seulement les mouvements (conserve la caméra + ox_target)
-            SetPlayerControl(PlayerId(), false, 2) -- 2 = désactive déplacement/sprint/saut, pas la caméra
-
     local input = lib.inputDialog("📅 Rendez-vous Police", {
         { type = "input", label = "Motif du rendez-vous", placeholder = "Plainte, audition, etc." },
         { type = "input", label = "Heure souhaitée", placeholder = "Exemple : 18h30" }
     })
-            -- 🔓 Défreeze proprement
-            FreezeEntityPosition(playerPed, false)
-            SetEntityInvincible(playerPed, false)
-            SetPlayerControl(PlayerId(), true, 0)
     if input then
 
         TriggerServerEvent("rdv:sendToPolice", input[1], input[2])
