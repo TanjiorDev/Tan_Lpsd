@@ -583,94 +583,94 @@ PoliceCloak = {
 --############################
 --########### Garage #########
 --############################
--- ConfigPolice.pos = {
---     spawnPoliceVehicle = {
---         position =  vector4(450.86, -1016.24, 28.15, 91.66)  -- Position de spawn du véhicule avec heading
---     }
--- }
--- ConfigPolice.Garage = {
---     PoliceGarage = {
---         coords = vector3(459.164398,-1008.063599,28.635828), -- Coordonnées du garage
---         size = vector3(3.0, 3.0, 3.0),
---         garageMenu = {
---             name = "police_garage",
---             icon = "fa-solid fa-car",
---             label = "Ouvrir le Garage police",
---             distance = 2.0
---         }
---     }
--- }
+ConfigPolice.pos = {
+    spawnPoliceVehicle = {
+        position =  vector4(450.86, -1016.24, 28.15, 91.66)  -- Position de spawn du véhicule avec heading
+    }
+}
+ConfigPolice.Garage = {
+    PoliceGarage = {
+        coords = vector3(459.164398,-1008.063599,28.635828), -- Coordonnées du garage
+        size = vector3(3.0, 3.0, 3.0),
+        garageMenu = {
+            name = "police_garage",
+            icon = "fa-solid fa-car",
+            label = "Ouvrir le Garage police",
+            distance = 2.0
+        }
+    }
+}
 
--- ConfigPolice.Ranger = {
---     PoliceRanger = {
---         coords = vector3( vector3(462.17, -1014.85, 27.74) ),  -- Exemple de coordonnées du garage
---         size = vector3(3.0, 3.0, 3.0),  -- Taille de la zone d'interaction
---         distance = 5.0,  -- Distance à partir de laquelle le joueur peut interagir
---         key = 38,  -- Touche E pour ranger (38 correspond à la touche E)
---     },
--- }
--- ConfigPolice.AuthorizedPoliceVehicles = {
---     {
---         label = "Vapid Police Cruiser",
---         model = "police",
---         image = "https://wiki.rage.mp/images/thumb/5/52/Police.png/164px-Police.png"
---     },
---     {
---         label = "Vapid Police Cruiser (Old)",
---         model = "police2",
---         image = "https://wiki.rage.mp/images/thumb/2/28/Police2.png/164px-Police2.png"
---     },
---     {
---         label = "Declasse Sheriff Cruiser",
---         model = "sheriff",
---         image = "https://wiki.rage.mp/images/thumb/6/68/Sheriff.png/164px-Sheriff.png"
---     },
---     {
---         label = "Declasse Sheriff SUV",
---         model = "sheriff2",
---         image = "https://wiki.rage.mp/images/thumb/c/c4/Sheriff2.png/164px-Sheriff2.png"
---     },
---     {
---         label = "Bravado Police Buffalo",
---         model = "police3",
---         image = "https://wiki.rage.mp/images/thumb/d/d5/Police3.png/164px-Police3.png"
---     },
---     {
---         label = "Vapid Police Stanier (Highway)",
---         model = "police4",
---         image = "https://wiki.rage.mp/images/thumb/4/4d/Police4.png/164px-Police4.png"
---     },
---     {
---         label = "Police Transport Van",
---         model = "policet",
---         image = "https://wiki.rage.mp/images/thumb/5/57/Policet.png/164px-Policet.png"
---     },
---     {
---         label = "Unmarked Cruiser",
---         model = "fbi",
---         image = "https://wiki.rage.mp/images/thumb/4/41/Fbi.png/164px-Fbi.png"
---     },
---     {
---         label = "Unmarked SUV",
---         model = "fbi2",
---         image = "https://wiki.rage.mp/images/thumb/6/69/Fbi2.png/164px-Fbi2.png"
---     },
---     {
---         label = "Police Riot",
---         model = "riot",
---         image = "https://wiki.rage.mp/images/thumb/3/33/Riot.png/164px-Riot.png"
---     },
---     {
---         label = "Police Motorcycle",
---         model = "policeb",
---         image = "https://wiki.rage.mp/images/thumb/2/2f/Policeb.png/164px-Policeb.png"
---     },
---     {
---         label = "Police Predator (Bateau)",
---         model = "predator",
---         image = "https://wiki.rage.mp/images/thumb/3/38/Predator.png/164px-Predator.png"
---     }
--- }
+ConfigPolice.Ranger = {
+    PoliceRanger = {
+        coords = vector3( vector3(462.17, -1014.85, 27.74) ),  -- Exemple de coordonnées du garage
+        size = vector3(3.0, 3.0, 3.0),  -- Taille de la zone d'interaction
+        distance = 5.0,  -- Distance à partir de laquelle le joueur peut interagir
+        key = 38,  -- Touche E pour ranger (38 correspond à la touche E)
+    },
+}
+ConfigPolice.AuthorizedPoliceVehicles = {
+    {
+        label = "Vapid Police Cruiser",
+        model = "police",
+        image = "https://wiki.rage.mp/images/thumb/5/52/Police.png/164px-Police.png"
+    },
+    {
+        label = "Vapid Police Cruiser (Old)",
+        model = "police2",
+        image = "https://wiki.rage.mp/images/thumb/2/28/Police2.png/164px-Police2.png"
+    },
+    {
+        label = "Declasse Sheriff Cruiser",
+        model = "sheriff",
+        image = "https://wiki.rage.mp/images/thumb/6/68/Sheriff.png/164px-Sheriff.png"
+    },
+    {
+        label = "Declasse Sheriff SUV",
+        model = "sheriff2",
+        image = "https://wiki.rage.mp/images/thumb/c/c4/Sheriff2.png/164px-Sheriff2.png"
+    },
+    {
+        label = "Bravado Police Buffalo",
+        model = "police3",
+        image = "https://wiki.rage.mp/images/thumb/d/d5/Police3.png/164px-Police3.png"
+    },
+    {
+        label = "Vapid Police Stanier (Highway)",
+        model = "police4",
+        image = "https://wiki.rage.mp/images/thumb/4/4d/Police4.png/164px-Police4.png"
+    },
+    {
+        label = "Police Transport Van",
+        model = "policet",
+        image = "https://wiki.rage.mp/images/thumb/5/57/Policet.png/164px-Policet.png"
+    },
+    {
+        label = "Unmarked Cruiser",
+        model = "fbi",
+        image = "https://wiki.rage.mp/images/thumb/4/41/Fbi.png/164px-Fbi.png"
+    },
+    {
+        label = "Unmarked SUV",
+        model = "fbi2",
+        image = "https://wiki.rage.mp/images/thumb/6/69/Fbi2.png/164px-Fbi2.png"
+    },
+    {
+        label = "Police Riot",
+        model = "riot",
+        image = "https://wiki.rage.mp/images/thumb/3/33/Riot.png/164px-Riot.png"
+    },
+    {
+        label = "Police Motorcycle",
+        model = "policeb",
+        image = "https://wiki.rage.mp/images/thumb/2/2f/Policeb.png/164px-Policeb.png"
+    },
+    {
+        label = "Police Predator (Bateau)",
+        model = "predator",
+        image = "https://wiki.rage.mp/images/thumb/3/38/Predator.png/164px-Predator.png"
+    }
+}
 
 --############################
 --########### ped #########
@@ -692,3 +692,4 @@ ConfigPolice.NPCs = {
     },
 
 }
+
