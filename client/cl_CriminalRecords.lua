@@ -86,18 +86,6 @@ zUI.SetItems(CreateMenu, function()
             if ESX and ESX.ShowNotification then ESX.ShowNotification() end
             return
         end
-
-        local out = lib.inputDialog('Création casier', {
-            { type = 'input',  label = 'Nom & Prénom', default = nameSuspect or '', required = true, min = 2, max = 30, icon = 'id-card' },
-            { type = 'number', label = 'Âge',           default = ageSuspect,        required = true, min = 0,  max = 130, icon = 'hashtag' },
-            { type = 'number', label = 'Taille (cm)',   default = heightSuspect,     required = true, min = 50, max = 250, icon = 'ruler' },
-            { type = 'input',  label = 'Nationalité',   default = nationalitySuspect or '', required = true, min = 2, max = 20, icon = 'flag' },
-            { type = 'select', label = 'Sexe',          options = {
-                    { label = 'Homme', value = 'H' },
-                    { label = 'Femme', value = 'F' }
-                }, default = sexSuspect or 'H', required = true, icon = 'venus-mars'
-            },
-        })
         -- 🔓 Défreeze proprement
             FreezeEntityPosition(playerPed, false)
             SetEntityInvincible(playerPed, false)
